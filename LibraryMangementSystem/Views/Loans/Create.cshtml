@@ -1,0 +1,117 @@
+﻿@model LibraryMangementSystem.Models.LoanViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Loan</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label for="emailSearch">Email</label>
+                <input id="emailSearch" type="text" name="searchEmail" class="form-control" placeholder="Enter Email Address">
+            </div>
+            <div class="form-group">
+                <div class="d-flex">
+                    <select id="emailList" name="selectedEmail" class="form-control mt-2 me-2">
+                        <option value="">Select an option</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bookSearch">Book Title</label>
+                <input id="bookSearch" type="text" name="searchBook" class="form-control" placeholder="Enter Book Title">
+            </div>
+            <div class="form-group">
+                <div class="d-flex">
+                    <select id="bookList" name="selectedBook" class="form-control mt-2 me-2">
+                        <option value="">Select an option</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LoanDate" class="control-label"></label>
+                <input asp-for="LoanDate" class="form-control" />
+                <span asp-validation-for="LoanDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <input asp-for="DueDate" class="form-control" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Approved" checked="checked" /> @Html.DisplayNameFor(model => model.Approved)
+                </label>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#emailSearch').on('keyup', function () {
+            var searchEmail = $(this).val();
+
+            if (searchEmail.length >= 1) {
+                $.ajax({
+                    url: '@Url.Action("SearchEmails", "Loans")',
+                    data: { searchEmail: searchEmail },
+                    success: function (data) {
+                        var dropdown = $('#emailList');
+                        dropdown.empty();
+
+                        $.each(data, function (i, item) {
+                            dropdown.append($('<option>', { value: item.id, text: item.text }));
+                        });
+                    },
+                    error: function () {
+                        alert('Error occurred while searching.');
+                    }
+                });
+            }
+        });
+        $('#bookSearch').on('keyup', function () {
+            var searchBook = $(this).val();
+
+            if (searchBook.length >= 1) {
+                $.ajax({
+                    url: '@Url.Action("SearchBooks", "Loans")',
+                    data: { searchBook: searchBook },
+                    success: function (data) {
+                        var dropdown = $('#bookList');
+                        dropdown.empty();
+
+                        $.each(data, function (i, item) {
+                            dropdown.append($('<option>', { value: item.id, text: item.text }));
+                        });
+                    },
+                    error: function () {
+                        alert('Error occurred while searching.');
+                    }
+                });
+            }
+        });
+    });
+
+</script>
